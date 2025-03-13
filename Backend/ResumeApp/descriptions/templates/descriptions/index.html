@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Related Descriptions</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            max-width: 90%;
+            margin: 50px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+            border-left: 5px solid #007bff;
+            border-right: 5px solid #007bff;
+        }
+        h1 {
+            color: #333;
+        }
+        input, button {
+            width: 100%;
+            padding: 12px;
+            margin: 12px 0;
+            border-radius: 8px;
+            border: 2px solid #ccc;
+            font-size: 18px;
+        }
+        input {
+            background: #fff;
+        }
+        button {
+            background: linear-gradient(90deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: linear-gradient(90deg, #0056b3, #003d80);
+        }
+        #results {
+            margin-top: 20px;
+            text-align: left;
+        }
+        .description {
+            background: #e9f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            border-left: 8px solid #007bff;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <h1>Find Related Descriptions</h1>
+    <label for="role">Enter Role:</label>
+    <input type="text" id="role" placeholder="Enter a role">
+    <button onclick="fetchDescriptions()">Find Descriptions</button>
+    <div id="results"></div>
+</div>
+
+<script>
+function fetchDescriptions() {
+    const role = $('#role').val().trim();
+    if (!role) {
+        alert("Please enter a role!");
+        return;
+    }
+
+    $('.loading').show();
+    $('#results').empty();
+
+    $.ajax({
+        type: 'POST',
+        url: '',
+        data: { role: role, csrfmiddlewaretoken: '{{ csrf_token }}' },
+        success: function(response) {
+            $('.loading').hide();
+            if (response.length === 0) {
+                $('#results').html('<p>No related descriptions found.</p>');
+            } else {
+                response.forEach(desc => {
+                    $('#results').append(
+                        `<div class="description">
+                            <p>${desc.Description}</p>
+                        </div>`
+                    );
+                });
+            }
+        },
+        error: function() {
+            $('.loading').hide();
+            $('#results').html('<p style="color: red;">There was an error processing your request.</p>');
+        }
+    });
+}
+</script>
+
+</body>
+</html>
